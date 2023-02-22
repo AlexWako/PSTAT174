@@ -1,0 +1,111 @@
+---
+title: "Homework 1"
+author: "Alex Wako"
+date: "2023-01-23"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1a
+
+Gaussian white noise are white noise that are IID normally distributed.
+
+\[\rho(h) = \frac{\gamma(h)}{\gamma(0)}\]
+
+Gaussian white noise is stationary as all {w~t~} are normally distributed. Additionally w~s~ and w~t~ are independent when s is not equal to t since all Gaussian white noise are independent and identically distributed.
+
+## 1b
+
+```{r}
+set.seed(1)
+
+# Let sigma squared equal to 10
+w_100 = ts(rnorm(100, 0, 10))
+sample_mean_100 = mean(w_100)
+```
+
+$\bar{w}$ = `r toString(sample_mean_100)`
+
+```{r}
+# Plotting the time series 
+plot(w_100)
+```
+
+This is the time series plot of the Gaussian white noise with n = 100, mean = 0, and a variance of 10.
+
+```{r}
+# Plotting the acf of the time series
+acf(w_100, 20)
+```
+
+This is the auto-correlation function plot of the time series plot.
+
+Theoretically, $\rho$(h) would equal 0 because all Gaussian white noises are independent, implying there are no correlation between $w_{t}$ and $w_{s}$. Comparing $\rho$(h) and $\hat\rho$(h), the graph for $\hat\rho$(h) shows that aside from when there is no lag, the auto-correlation function is relatively close to 0. Because there is randomness in creating 100 samples of variables to create a normal distribution, there are points of lag where the auto-correlation function does not equal to 0.
+
+## 1c
+
+```{r}
+set.seed(2)
+
+w_1000 = ts(rnorm(1000, 0, 10))
+sample_mean_1000 = mean(w_1000)
+```
+
+$\bar{w}$ = `r toString(sample_mean_1000)`
+
+```{r}
+# Plotting the time series
+plot(w_1000)
+```
+
+This is the time series plot of the Gaussian white noise with n = 1000, mean = 0, and a variance = 10.
+
+```{r}
+# Plotting the acf of the time series
+acf(w_1000, 20)
+```
+
+This is the auto-correlation function plot of the time series plot.
+
+Once again, the theoretical $\rho$(h) would equal 0 as the time series plot is still using Gaussian white noise. Comparing $\rho$(h) to $\hat\rho$(h), aside from when there is no lag, the acf is relatively close to 0, even closer than when n=100. Since there is still randomness in creating a normal distribution with n = 1000, there are points of lag where the acf is not equal to 0.
+
+Comparing the $\hat\rho(h)$ when n = 100 and n = 1000, the range of acf is smaller for when n = 1000 as there are more more samples. The sample mean is also smaller. This is because of the Central Limit Theorem; with larger sample size, the distribution gets closer to its theoretical distribution (in this case with mean 0 and variance 10).
+
+## 2
+
+```{r}
+set.seed(3)
+
+w = rnorm(300, 0, 1)
+
+s1 = c(10*cos((pi*1:100)/10), 5*cos((pi*101:200)/10), cos((pi*201:300)/10))
+x1 = ts(s1 + w)
+
+s2 = c(10*cos((pi*1:100)/10), 5*cos((pi*101:200)/5), cos((pi*201:300)/3))
+x2 = ts(s2 + w)
+```
+
+```{r}
+plot(x1)
+```
+
+The pattern in the first signal-plus-noise model has its amplitude decreasing as t increases in intervals of 100, but the frequency of oscillation of the noise stays the same throughout the time series plot. The noise in this plot removes the smoothness of the lines given by the signal and adds randomness (the spikes on the line).
+
+```{r}
+plot(x2)
+```
+
+The pattern in the second signal-plus-noise model has its amplitude decreasing as t increases in intervals of 100, and this time the frequency of oscillation of the noise increases in the same intervals. The noise in this plot adds the same features as the first plot but there is more randomness because the frequency of oscillation of the signal increases in intervals. 
+
+## 3
+
+On paper
+
+## 4
+
+On paper

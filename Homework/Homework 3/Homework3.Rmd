@@ -1,0 +1,36 @@
+---
+title: "Homework 3"
+author: "Alex Wako"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+library(astsa)
+library("readxl")
+```
+
+1
+
+```{r 1}
+x1 = UnempRate
+logx1 = log(x1); dlogx1 = diff(logx1); ddlogx1 = diff(dlogx1, 12)
+plot.ts(cbind(x1, logx1, dlogx1, ddlogx1), main = "")
+sarima(ddlogx1, 0, 1, 1, 1, 0, 0, 12) # The Seasonal ARIMA model
+prediction1 <- sarima.for(x1, 12, 0, 1, 1, 1, 0, 0, 12) # Forecast of the next 12 months
+prediction1$pred
+```
+# 2
+
+```{r 2}
+temp <- read.table("Problem2.txt", header = T, sep = ",")
+x2 <- ts(temp$Value, start = c(1948, 1), frequency = 12)
+logx2 = log(x2); dlogx2 = diff(logx2); ddlogx2 = diff(dlogx2, 12)
+plot.ts(cbind(x2, logx2, dlogx2, ddlogx2), main = "")
+sarima(ddlogx2, 0, 1, 1, 1, 0, 0, 12) # The Seasonal ARIMA model
+prediction2 <- sarima.for(x2, 12, 1, 0, 1, 1, 0, 0, 12) # Forecast of the next 12 months
+prediction2$pred
+```
+\
+Comparing the two plots created by the Seasonal ARIMA(0, 1, 1) * (1, 0, 0), the forecast found in the first plot stays relatively similar to the actual data found in the second plot. A large number of unemployment occurred during the first quarter of 2020, likely due to the rise of COVID-19, and businesses needing to cut down on expenses, but by 2022, the time series plot went back down to follow the trend of the time series plot. From the forecast created from the second plot, a likely prediction is a small rising trend in unemployment for the next 12 months with the confidence intervals showing that to be more than likely that an even or rising trend will occur.

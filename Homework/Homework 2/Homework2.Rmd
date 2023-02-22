@@ -1,0 +1,69 @@
+---
+title: "Homework 2"
+author: "Alex Wako"
+date: "2023-01-28"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 10, fig.height = 5) 
+library(astsa)
+```
+
+# Problem 2
+
+## a
+
+```{r 2a oil, include = FALSE}
+help(oil, astsa)
+```
+
+The oil data is a time series data set describing the price of crude oil, WTI spot price FOB in dollars per barrel, for every week between the year 2000 to mid-2010.
+
+```{r 2a gas, include = FALSE}
+help(gas, astsa)
+```
+
+The gas data is a time series data set describing the price of gasolin, New York Harbor conventional regular gasoline weekly spot price FOB in cents per gallon, for every week between the year 2000 to mid-2010.
+
+## b
+
+```{r 2b, echo = FALSE}
+ts.plot(gas, oil, main = "Prices of Gas and Oil between 2000 - 2010", gpars = list(col = c("red", "blue")))
+legend("topleft", legend = c("Gas", "Oil"), col = c("red", "blue"), lty = 1)
+```
+
+Time series plot of the gas and oil data set. Gas is plotted in dollars per barrel while oil is plotted in cents per gallon.
+
+The time series plots both seem to be stationary because there is a constant trend dependent on t, but because there is a sudden crash in price between 2008 and 2010, the plots are not stationary.
+
+## c
+
+```{r 2c, echo = FALSE}
+ts.plot(diff(log(gas)), diff(log(oil)), main = "Prices of Gas and Oil between 2000 - 2010", gpars = list(col = c("red", "blue")))
+legend("topleft", legend = c("Diff(log(Gas))", "Diff(log(Oil))"), col = c("red", "blue"), lty = 1)
+```
+
+The transformed plots are now stationary as shown in the acf plots. Both gas and oil acf plots act like stationary white noise with the acf decaying quickly after lag = 0, and the acf for each lag being relatively close to 0.
+
+## d
+
+```{r 2d, echo = FALSE}
+ccf(diff(log(gas)), diff(log(oil)), 545, col = c("red", "blue"), ylab = "Cross-correlation Function", main = "Cross-correlation Function of the Transformed Data of Gas and Oil")
+legend("topright", legend = c("acf(Diff(log(Gas)))", "acf(Diff(log(Oil)))"), col = c("red", "blue"), lty = 1)
+```
+
+The Cross-correlation Function of the two transformed data found in part c.
+
+## e
+
+```{r 1e, echo = FALSE}
+plot(diff(log(oil)), diff(log(gas)), main = "Scatterplot of Transformed Time Series of Gas and Oil with a Lowess Fit")
+lines(lowess(diff(log(oil)), diff(log(gas))), col = "red")
+```
+
+The scatter plot of the transformed series with a lowess fit.
+
+
