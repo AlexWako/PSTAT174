@@ -1,0 +1,69 @@
+---
+output: pdf_document
+---
+
+```{r appendix, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+library(quantmod)
+library(astsa)
+library(xts)
+
+getSymbols("SPY", from = "1993-01-31")
+
+SPY <- to.weekly(SPY$SPY.Adjusted)
+tsSPY1 <- SPY$`SPY$SPY.Adjusted.Close`
+
+# Plotting data
+
+plot(tsSPY1, ylab = "Closing price of SPY", main = "SPY Weekly Closing Price from Feburary 1993 to Present Day")
+plot(tsSPY1, ylab = "Closing price of SPY", main = "SPY Weekly Closing Price from Feburary 1993 to Present Day")
+
+# Transformation
+
+dlSPY1 = diff(log(tsSPY1))[-1]
+
+# Plotting transformation
+
+plot.ts(dlSPY1, main = "SPY weekly closing diff(log(price)) from Feburary 1993 to Feburary 2023")
+
+# Spotting trends
+
+lag1.plot(dlSPY1, 20)
+acf2(dlSPY1, 60)
+try(decompose(dlSPY1)) # Returns an error that the time series has no or less than 2 periods
+
+# A seasonal trend does not seem to exist and the ACF and PACF show to be stationary
+# The ACF and PACF show the model is likely has AR(1) and/or MA(2) for the first set of data
+sarima(dlSPY1, 1, 0, 0, 0, 0, 0, 52)
+sarima(dlSPY1, 0, 0, 2, 0, 0, 0, 52)
+sarima(dlSPY1, 2, 0, 0, 0, 0, 0, 52)
+sarima(dlSPY1, 2, 0, 2, 0, 0, 0, 52)
+sarima(dlSPY1, 0, 0, 1, 0, 0, 0, 52)
+sarima(dlSPY1, 1, 1, 0, 0, 0, 0, 52)
+
+# The Seasonal ARIMA (2, 0, 2) x (0, 0, 0) shows the best results
+# Forecasting 12 weeks ahead
+forecast <- sarima.for(dlSPY1, 12, 2, 0, 2, 0, 0, 0, 52)
+
+library(fGarch)
+
+# Heteroskedasticity is seen in the time series data so a GARCH model is deployed
+GARCH1 <- sarima(dlSPY1, 1, 0, 0)
+GARCH2 <- sarima(dlSPY1, 0, 0, 2)
+
+summary(m1AR <- garchFit(~arma(1, 0)+garch(1, 1), dlSPY1))
+summary(m2AR <- garchFit(~arma(1, 0)+garch(1, 0), dlSPY1))
+summary(m1MA <- garchFit(~arma(0, 2)+garch(1, 1), dlSPY1))
+summary(m2MA <- garchFit(~arma(0, 2)+garch(1, 0), dlSPY1))
+summary(m1ARMA <- garchFit(~arma(1, 2)+garch(1, 1), dlSPY1))
+summary(m2ARMA <- garchFit(~arma(1, 2)+garch(1, 0), dlSPY1))
+summary(m1 <- garchFit(~garch(1, 1), dlSPY1))
+summary(m2 <- garchFit(~garch(1, 0), dlSPY1))
+
+predict(m1AR, 12, plot = TRUE)
+
+```
+
+\newpage
+
+```{r appendix, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
